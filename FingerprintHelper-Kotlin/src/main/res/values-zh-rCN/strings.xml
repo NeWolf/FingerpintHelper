@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="PERMISSION_NEEDED">指纹认证需要授予权限,请到设置授予权限</string>
+    <string name="NO_FINGERPRINTS">没有指纹,请到设置中心录入指纹.</string>
+    <string name="HARDWARE_DISABLED">该设备指纹没有处于可用状态.</string>
+    <string name="LOCK_SCREEN_DISABLED">该设备没有设置安全锁屏,请到设置中心先设置安全锁屏.</string>
+    <string name="FINGERPRINT_NOT_RECOGNIZED">验证失败,请再试一次.</string>
+    <string name="FINGERPRINT_SUCCEEDED">验证成功</string>
+</resources>

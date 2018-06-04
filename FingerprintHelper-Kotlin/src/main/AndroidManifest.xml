@@ -1,2 +1,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.newolf.fingerprinthelper_kotlin"/>
+          package="com.newolf.fingerprinthelper_kotlin">
+
+    <uses-permission android:name="android.permission.USE_FINGERPRINT"/>
+    <application>
+
+        <service android:name=".services.TimeOutService"/>
+
+    </application>
+
+
+</manifest>

@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">FingerprintHelper-Kotlin</string>
+    <string name="PERMISSION_NEEDED">Fingerprint authentication permission not enabled</string>
+    <string name="NO_FINGERPRINTS">Please verify that at least one fingerprint has been registered on the devices.</string>
+    <string name="HARDWARE_DISABLED">Fingerprint scanner is absent od disable on this device.</string>
+    <string name="LOCK_SCREEN_DISABLED">Please verify that the lock screen is protected by a PIN, pattern or password (fingerprints can only works if the lock screen has been secured).</string>
+    <string name="FINGERPRINT_NOT_RECOGNIZED">Fingerprint not recognized, try again.</string>
+    <string name="FINGERPRINT_SUCCEEDED">Fingerprint recognized</string>
 </resources>
