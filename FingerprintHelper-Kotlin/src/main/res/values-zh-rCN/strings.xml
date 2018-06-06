@@ -6,4 +6,9 @@
     <string name="LOCK_SCREEN_DISABLED">该设备没有设置安全锁屏,请到设置中心先设置安全锁屏.</string>
     <string name="FINGERPRINT_NOT_RECOGNIZED">验证失败,请再试一次.</string>
     <string name="FINGERPRINT_SUCCEEDED">验证成功</string>
+    <string name="AUTH_TO_MANY_TRIES">尝试次数太多,请稍后再试.</string>
+    <string name="fingerprint_dialog_title">提示</string>
+    <string name="fingerprint_dialog_msg">如果您希望使用指纹认证，请验证：\n 1.锁屏被一个PIN、模式或密码保护（如果锁屏已经被保护，指纹才可以工作）.\n 2.至少有一个指纹已经在设备上注册了.\n\n 希望打开安全设置来验证吗?</string>
+    <string name="fingerprint_dialog_negative">暂不设置</string>
+    <string name="fingerprint_dialog_positive">立即前往设置</string>
 </resources>

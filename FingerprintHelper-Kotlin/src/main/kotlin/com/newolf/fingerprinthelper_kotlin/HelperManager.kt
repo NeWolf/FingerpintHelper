@@ -61,24 +61,24 @@ class HelperManager(c: Context, l: HelperListener, val keyName: String, var time
     private var afterStartListenTimeOut = false
     private var selfCancelled = false
     private var secureElementsReady = false
-    private var broadcastRegistered = false
+    var broadcastRegistered = false
 
-    private companion object {
+    companion object {
         private const val KEY_TO_MANY_TRIES_ERROR = "KEY_TO_MANY_TRIES_ERROR"
         //        private const val KEY_LOGGING_ENABLE = "KEY_LOGGING_ENABLE"
 //        private const val KEY_SECURE_KEY_NAME = "KEY_SECURE_KEY_NAME"
 //        private const val KEY_IS_LISTENING = "KEY_IS_LISTENING"
         private const val TRY_LEFT_DEFAULT = 5
+
     }
 
     private var tryTimeOutDefault = timeOut
 
     private val timeOutBroadcast = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            timeOutLeft = intent.getLongExtra(WolfConstants.Manager.KEY_TIME_OUT_LEFT, -1)
+        override fun onReceive(context: Context?, intent: Intent?) {
+            timeOutLeft = intent?.getLongExtra(WolfConstants.Manager.KEY_TIME_OUT_LEFT, -1)!!
 
             logThis("timeOutLeft = " + (timeOutLeft / 1000).toString() + " sec")
-
             if (timeOutLeft > 0) {
                 if (isActivityForeground) {
                     listener?.get()?.onFingerprintListening(false, timeOutLeft)
@@ -94,7 +94,21 @@ class HelperManager(c: Context, l: HelperListener, val keyName: String, var time
                 }
                 logThis("startListening after timeout")
             }
+
         }
+    }
+
+    init {
+
+        if (isTimerActive() && !TimeOutService.isRunning()) {
+            listener?.get().let {
+                it?.onFingerprintStatus(false, ErrorType.Auth.AUTH_TOO_MANY_TRIES, context.get()?.getText(R.string.AUTH_TO_MANY_TRIES))
+                runTimeOutService()
+            }
+        } else if (isTimerActive()) {
+            registerBroadcast(true)
+        }
+
     }
 
     private fun saveTimeOut(timesLeft: Long) {
@@ -128,7 +142,7 @@ class HelperManager(c: Context, l: HelperListener, val keyName: String, var time
         if (logEnable) Log.d(WolfConstants.TAG, s)
     }
 
-    private fun isFingerprintEnrolled(showError: Boolean): Boolean {
+    internal fun isFingerprintEnrolled(showError: Boolean = true): Boolean {
         //Known issue with Samsung firmware: see the link
         //https://stackoverflow.com/questions/39372230/fingerprintmanagercompat-method-had-issues-with-samsung-devices
         //we need to call first Android method isHardwareDetected() to avoid
@@ -292,13 +306,15 @@ class HelperManager(c: Context, l: HelperListener, val keyName: String, var time
     }
 
     private fun registerBroadcast(register: Boolean) {
-        logThis("timeOutLeft = $timeOutLeft  register = $register broadcastRegistered = $broadcastRegistered")
+        logThis("registerBroadcast \t timeOutLeft = $timeOutLeft  register = $register broadcastRegistered = $broadcastRegistered")
 
         if (timeOutLeft > 0 && register && !broadcastRegistered) {
-            logThis("broadcastRegistered = " + true)
+            logThis("broadcastRegistered = " + true + "\ttimeOutBroadcast = $timeOutBroadcast")
             broadcastRegistered = true
-//            context.get()?.registerReceiver(timeOutBroadcast, )
+//            context.get()?.registerReceiver(timeOutBroadcast, IntentFilter(WolfConstants.TimeOutService.TIME_OUT_BROADCAST))
             LocalBroadcastManager.getInstance(context.get()!!).registerReceiver(timeOutBroadcast, IntentFilter(WolfConstants.TimeOutService.TIME_OUT_BROADCAST))
+
+
         } else if (timeOutLeft > 0 && !register && broadcastRegistered) {
             logThis("broadcastRegistered = " + false)
             broadcastRegistered = false
@@ -385,12 +401,58 @@ class HelperManager(c: Context, l: HelperListener, val keyName: String, var time
     override fun onAuthenticationHelp(helpCode: Int, helpString: CharSequence?) {
         super.onAuthenticationHelp(helpCode, helpString)
         triesCountLeft = TRY_LEFT_DEFAULT
-        listener?.get()?.onFingerprintStatus(false, helpCode, helpString)
+//        listener?.get()?.onFingerprintStatus(false, helpCode, helpString)
     }
 
     override fun onAuthenticationFailed() {
         super.onAuthenticationFailed()
         triesCountLeft--
         listener?.get()?.onFingerprintStatus(false, ErrorType.Auth.AUTH_NOT_RECOGNIZED, context.get()?.getString(R.string.FINGERPRINT_NOT_RECOGNIZED))
+    }
+
+    internal fun onDestroy() {
+        context.clear()
+        listener?.clear()
+        listener = null
+        keyStore = null
+        keyGenerator = null
+        cipher = null
+        cryptoObject = null
+        timeOutIntent = null
+    }
+
+    internal fun stopListening(): Boolean {
+        isActivityForeground = false
+        cancellationSignal?.let {
+            selfCancelled = true
+            cancellationSignal?.cancel()
+            cancellationSignal = null
+            isListening = false
+        }
+        registerBroadcast(false)
+        triesCountLeft = TRY_LEFT_DEFAULT
+        return isListening
+    }
+
+    internal fun cleanTimeOut(): Boolean {
+        if (isTimerActive() && TimeOutService.isRunning() && TimeOutService.tryToStopMe()) {
+            timeOutLeft = 0
+            saveTimeOut(-1)
+            return true
+        }
+        return false
+    }
+
+    private fun isTimerActive(): Boolean {
+        val i = shp.getLong(WolfConstants.Manager.KEY_TIME_OUT_LEFT, -1)
+        val current = System.currentTimeMillis()
+        if (current < i) {
+            timeOut = i - current
+            timeOutLeft = timeOut
+            logThis("isTimeOutActive = " + true)
+            return true
+        }
+        logThis("isTimeOutActive = " + false)
+        return false
     }
 }
