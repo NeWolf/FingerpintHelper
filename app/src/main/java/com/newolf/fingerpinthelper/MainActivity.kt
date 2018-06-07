@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
 import android.support.v7.app.AppCompatActivity
-import android.widget.Toast
 import com.newolf.fingerprinthelper_kotlin.FingerprintHelper
 import com.newolf.fingerprinthelper_kotlin.constants.ErrorType
 import com.newolf.fingerprinthelper_kotlin.interfaces.HelperListener
@@ -58,8 +57,8 @@ class MainActivity : AppCompatActivity(), HelperListener {
                 .buid()
 
         val isHardwareEnable: Boolean = mHelper.isHardwareEnable
-        Toast.makeText(this, "isHardwareEnable = $isHardwareEnable", Toast.LENGTH_SHORT).show()
-        Toast.makeText(this, "canListenByUser = ${mHelper.canListenByUser}", Toast.LENGTH_SHORT).show()
+//        Toast.makeText(this, "isHardwareEnable = $isHardwareEnable", Toast.LENGTH_SHORT).show()
+//        Toast.makeText(this, "canListenByUser = ${mHelper.canListenByUser}", Toast.LENGTH_SHORT).show()
 
 //        mHelper.showSecuritySettingsDialog()
     }
