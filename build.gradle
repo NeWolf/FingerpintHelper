@@ -19,15 +19,15 @@ buildscript {
         ]
     }
     repositories {
-        google()
         jcenter()
         maven { url 'https://jitpack.io' }
+        google()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.2.0-alpha04'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
 
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.0'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 
@@ -38,9 +38,9 @@ buildscript {
 
 allprojects {
     repositories {
-        google()
         jcenter()
         maven { url 'https://jitpack.io' }
+        google()
     }
 }
 
