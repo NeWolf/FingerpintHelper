@@ -192,7 +192,7 @@ class FingerprintHelper private constructor(val builder: Builder) : LifecycleObs
                     .setTitle(R.string.fingerprint_dialog_title)
                     .setMessage(R.string.fingerprint_dialog_msg)
                     .setNegativeButton(R.string.fingerprint_dialog_negative, null)
-                    .setPositiveButton(R.string.fingerprint_dialog_positive, { dialog, which ->
+                    .setPositiveButton(R.string.fingerprint_dialog_positive, { dialog, _ ->
                         run {
                             dialog.dismiss()
                             openSecuritySettings()

@@ -6,8 +6,11 @@ import android.provider.Settings
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
 import com.newolf.fingerprinthelper_kotlin.FingerprintHelper
+import com.newolf.fingerprinthelper_kotlin.constants.ErrorType
 import com.newolf.fingerprinthelper_kotlin.interfaces.HelperListener
 import kotlinx.android.synthetic.main.activity_main.*
+
+
 
 class MainActivity : AppCompatActivity(), HelperListener {
     val buffer = StringBuffer()
@@ -16,7 +19,7 @@ class MainActivity : AppCompatActivity(), HelperListener {
         if (listening){
             tv.setText("请验证已录入的指纹")
         }else{
-            var left = milliseconds/1000
+            val left = milliseconds/1000
             tv.setText("还剩下 $left 秒 \t $listening")
         }
 
@@ -34,6 +37,12 @@ class MainActivity : AppCompatActivity(), HelperListener {
         if (authSuccessful) {
             startActivity(Intent(Settings.ACTION_SETTINGS))
 //            finish()
+        }else {
+            when (errorType) {
+                ErrorType.General.HARDWARE_DISABLED, ErrorType.General.NO_FINGERPRINTS -> mHelper.showSecuritySettingsDialog()
+
+
+            }
         }
     }
 
@@ -52,7 +61,7 @@ class MainActivity : AppCompatActivity(), HelperListener {
         Toast.makeText(this, "isHardwareEnable = $isHardwareEnable", Toast.LENGTH_SHORT).show()
         Toast.makeText(this, "canListenByUser = ${mHelper.canListenByUser}", Toast.LENGTH_SHORT).show()
 
-        mHelper.showSecuritySettingsDialog()
+//        mHelper.showSecuritySettingsDialog()
     }
 
     override fun onResume() {
